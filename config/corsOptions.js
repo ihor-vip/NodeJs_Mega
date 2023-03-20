@@ -1,4 +1,3 @@
-// Cross Origin Resource Sharing
 const whitelist = [
     'https://www.yoursite.com',
     'http://127.0.0.1:5500',
@@ -16,4 +15,4 @@ const corsOptions = {
     optionsSuccessStatus: 200
 }
 
-module.exports = corsOptions
+module.exports = corsOptions;

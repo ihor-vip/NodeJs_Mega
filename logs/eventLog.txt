@@ -1,2 +1,0 @@
-20230320	09:21:25	f634147e-1872-4edf-b00e-08eac243379a	Log event emitted!
-20230320	09:21:30	800cddf9-915b-4aed-87cc-f0dbeb4deb47	Log event emitted!
