@@ -1,35 +1,15 @@
 const express = require('express');
-const {engine} = require('express-handlebars');
-const DB = require('./dataBase/users')
+
+const userRouter = require('./routes/user.router')
+const {PORT} = require('./config/config')
 
 const app = express();
 
-app.engine('.hbs', engine({defaultLayout: false}));
-app.set('view engine', '.hbs');
-app.set('views', './static');
+app.use(express.json());
+app.use(express.urlencoded({extended: true}))
 
-app.get('/', (req, res) => {
-    res.json('hi')
-})
+app.use('/users', userRouter);
 
-app.get('/users', (req, res) => {
-    res
-        .status(200)
-        .json(DB)
-})
-
-app.get('/users/:id', (req, res) => {
-    const {id} = req.params;
-
-    res
-        .status(200)
-        .json(DB[id] || {})
-})
-
-app.get('/home', (req, res) => {
-    res.render('welcome', {page: 'this is home page'})
-})
-
-app.listen(5000, () => {
-    console.log('App listen 5000');
-})
+app.listen(PORT, () => {
+    console.log(`App listen port ${PORT}`);
+});
