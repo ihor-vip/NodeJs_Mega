@@ -6,3 +6,5 @@
 20230321	09:48:55	b298a7dd-6c75-47e9-aecd-ec0d02ccd860	POST	undefined	/auth
 20230321	09:49:45	4f9be3c8-be81-4d9d-a420-a329decc36e4	POST	undefined	/auth
 20230321	09:49:59	afc71dad-615a-43e7-80ca-5d27f5e26bc0	GET	undefined	/empoyees
+20230321	11:05:24	765dec2d-c495-4236-b524-cf3b721a77f2	POST	undefined	/register
+20230321	11:07:00	21d1cfd3-1af5-4d85-9ebd-1907f47d058a	POST	undefined	/register
