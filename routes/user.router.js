@@ -5,10 +5,12 @@ const userMiddlewares = require('../middlewares/user.midlleware');
 
 const userRouter = Router();
 
-userRouter.get('/', userController.getAllUsers )
+userRouter.get('/', userController.getAllUsers);
+userRouter.post('/', userMiddlewares.checkIsEmailDuplicate, userController.createUser);
 
-userRouter.post('/', userMiddlewares.checkIsEmailDuplicate, userController.createUser )
-
-userRouter.get('/:id', userController.getUserById )
+userRouter.all('/:id', userMiddlewares.checkIsUserPresent);
+userRouter.get('/:id', userController.getUserById);
+userRouter.delete('/:id', userController.getUserById);
+userRouter.patch('/:id', userController.getUserById);
 
 module.exports = userRouter;

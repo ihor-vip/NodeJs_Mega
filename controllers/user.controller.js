@@ -1,41 +1,45 @@
 const User = require("../dataBase/User.model");
 
 module.exports = {
-    getAllUsers: async (req, res) => {
-        try {
-            const users = await User.find();
-            res.status(200).json(users);
+  getAllUsers: async (req, res, next) => {
+    try {
+      const {limit = 2, page = 1} = req.query;
+      const skip = (page - 1) * limit;
 
-        } catch (e) {
-            res.status(404).json({message: e.message})
-        }
-    },
+      const users = await User.find().limit(limit).skip(skip);
+      const count = await User.count({})
 
-    createUser: async (req, res) => {
-        try {
-            const createdUser = await User.create(req.body);
+      res.status(200).json({
+        page,
+        perPage: limit,
+        data: users,
+        count
+      });
 
-            res.status(201).json(createdUser);
-
-        } catch (e) {
-            res.status(404).json({message: e.message})
-        }
-    },
-
-    getUserById: async (req, res) => {
-        try {
-            const {id} = req.params;
-            const user = await User.findById(id);
-
-            if (!user) {
-                res.status(404).json({message: 'No user found with that id'});
-                return;
-            }
-
-            res.json(user);
-
-        } catch (e) {
-            res.status(404).json({message: e.message})
-        }
+    } catch (e) {
+      next(e)
     }
+  },
+
+  createUser: async (req, res, next) => {
+    try {
+      const createdUser = await User.create(req.body);
+
+      res.status(201).json(createdUser);
+
+    } catch (e) {
+      next(e)
+    }
+  },
+
+  getUserById:  (req, res, next) => {
+    try{
+
+      res.json(req.user);
+
+    } catch (e) {
+      next(e)
+    }
+  }
 }
+
