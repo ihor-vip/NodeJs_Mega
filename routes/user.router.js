@@ -9,7 +9,7 @@ userRouter.get('/', userController.getAllUser);
 userRouter.post('/', userMiddlewares.newUserValidator, userMiddlewares.checkIsEmailDuplicate, userController.createUser);
 
 
-userRouter.all('/:userIndex', userMiddlewares.checkIsUserPresent);
+userRouter.all('/:userIndex', userMiddlewares.getUserDynamically('userIndex', 'params', '_id'));
 userRouter.get('/:userIndex', userController.getUserById);
 userRouter.delete('/:userIndex', userController.getUserById);
 userRouter.patch('/:userIndex', userController.getUserById);

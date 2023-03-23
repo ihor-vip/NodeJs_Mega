@@ -1,7 +1,6 @@
 const User = require('../dataBase/User.model');
 const ApiError = require('../error/ApiError');
 const { userValidator } = require('../validators');
-const { authService } = require("../services");
 
 const checkIsEmailDuplicate = async (req, res, next) => {
   try {
@@ -20,30 +19,39 @@ const checkIsEmailDuplicate = async (req, res, next) => {
   }
 }
 
-const checkIsUserPresent = async (req, res, next) => {
-  try {
-    const { userIndex } = req.params;
+// eslint-disable-next-line arrow-body-style
+const getUserDynamically = (paramName = '_id', where = 'body', dataBaseField = paramName) => {
+  return async (req, res, next) => {
+    try {
+      const findObject = req[where];
 
-    const userById = await User.findById(userIndex);
+      if (!findObject || typeof findObject !== "object") {
+        next(new ApiError('Wrong search param in middleware'));
+        return;
+      }
 
-    if (!userById) {
-      next(new ApiError('User not found', 404));
-      return
+      const param = findObject[paramName];
+
+      // TODO how to fix (normalization or extra find)
+      const user = await User.findOne({ [dataBaseField]: param }).select("+password");
+
+      if (!user) {
+        next(new ApiError('User not found', 404));
+        return
+      }
+
+      req.user = user;
+
+      next()
+    } catch (e) {
+      next(e)
     }
-
-    req.user = userById;
-
-    next()
-  } catch (e) {
-    next(e)
   }
 }
 
 const newUserValidator = (req, res, next) => {
   try {
     const { error, value } = userValidator.newUserJoiSchema.validate(req.body);
-
-    authService.validateToken('sadad', 'access');
 
     if (error) {
       next(new ApiError(error.details[0].message, 400));
@@ -59,7 +67,7 @@ const newUserValidator = (req, res, next) => {
 }
 
 module.exports = {
+  getUserDynamically,
   checkIsEmailDuplicate,
-  checkIsUserPresent,
   newUserValidator
 }

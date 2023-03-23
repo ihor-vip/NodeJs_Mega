@@ -5,7 +5,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const { PORT, MONGO_URL } = require('./config/config');
-const { userRouter } = require('./routes');
+const { authRouter, userRouter } = require('./routes');
 const ApiError = require('./error/ApiError');
 
 const app = express();
@@ -17,6 +17,7 @@ mongoose.connect(MONGO_URL).then(() => {
   console.log('Connection success')
 })
 
+app.use('/auth', authRouter);
 app.use('/users', userRouter);
 app.use('*', _notFoundHandler);
 
@@ -45,5 +46,4 @@ app.listen(PORT, () => {
 // TODO
 // KISS
 // YAGNI
-// TODO OPTIONAL
 // SOLID
