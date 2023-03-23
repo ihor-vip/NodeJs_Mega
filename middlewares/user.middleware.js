@@ -1,6 +1,7 @@
 const User = require('../dataBase/User.model');
 const ApiError = require('../error/ApiError');
 const { userValidator } = require('../validators');
+const { authService } = require("../services");
 
 const checkIsEmailDuplicate = async (req, res, next) => {
   try {
@@ -42,6 +43,8 @@ const newUserValidator = (req, res, next) => {
   try {
     const { error, value } = userValidator.newUserJoiSchema.validate(req.body);
 
+    authService.validateToken('sadad', 'access');
+
     if (error) {
       next(new ApiError(error.details[0].message, 400));
       return;
@@ -51,7 +54,7 @@ const newUserValidator = (req, res, next) => {
 
     next()
   } catch (e) {
-    next(e)
+    next(e);
   }
 }
 
