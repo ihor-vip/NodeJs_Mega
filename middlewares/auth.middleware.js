@@ -1,6 +1,7 @@
 const { authService } = require('../services')
 const { authValidator } = require('../validators')
 const OAuth = require('../dataBase/OAuth.model')
+const ActionToken = require('../dataBase/ActionToken.model')
 const ApiError = require('../error/ApiError')
 
 async function checkAccessToken(req, res, next) {
@@ -58,8 +59,30 @@ function isLoginDataValid(req, res, next) {
   }
 }
 
+function checkActionToken(actionType) {
+  return async function(req, res, next) {
+    try {
+      const { token } = req.body;
+
+      authService.validateToken(token, actionType);
+
+      const tokenData = await ActionToken.findOne({ token, actionType }).populate('user_id');
+
+      if (!tokenData || !tokenData.user_id) {
+        return next(new ApiError('Token not valid'), 403);
+      }
+
+      req.user = tokenData.user_id;
+      next();
+    } catch (e) {
+      next(e);
+    }
+  }
+}
+
 module.exports = {
   checkAccessToken,
   checkRefreshToken,
-  isLoginDataValid
+  checkActionToken,
+  isLoginDataValid,
 };
