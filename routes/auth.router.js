@@ -1,7 +1,7 @@
 const { Router } = require('express');
 
 const { authController } = require('../controllers');
-const { authMiddleware, userMiddleware } = require('../middlewares');
+const { authMiddleware, userMiddleware } = require('@middlewares');
 const { actionTypesEnum } = require("../constants");
 
 const authRouter = Router();

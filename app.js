@@ -1,3 +1,4 @@
+require('module-alias/register');
 const express = require('express');
 const fileUpload = require('express-fileupload');
 const mongoose = require('mongoose');
@@ -5,9 +6,9 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
-const { PORT, MONGO_URL } = require('./config/config');
+const { PORT, MONGO_URL, NODE_ENV } = require('./config/config');
 const { authRouter, userRouter } = require('./routes');
-const ApiError = require('./error/ApiError');
+const ApiError = require('@error');
 
 const app = express();
 
@@ -19,6 +20,11 @@ mongoose.connect(MONGO_URL).then(() => {
 });
 
 app.use(fileUpload({}));
+
+if (NODE_ENV === 'local') {
+  const morgan = require('morgan');
+  app.use(morgan('dev'));
+}
 
 app.use('/auth', authRouter);
 app.use('/users', userRouter);

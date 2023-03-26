@@ -1,5 +1,5 @@
+const ApiError = require('@error');
 const User = require('../dataBase/User.model');
-const ApiError = require('../error/ApiError');
 const { userValidator } = require('../validators');
 const { constants } = require('../constants');
 
