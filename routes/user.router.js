@@ -9,10 +9,11 @@ userRouter.get('/', userController.getAllUser);
 userRouter.post('/', userMiddlewares.newUserValidator, userMiddlewares.checkIsEmailDuplicate, userController.createUser);
 
 
-userRouter.all('/:userIndex', userMiddlewares.getUserDynamically('userIndex', 'params', '_id'));
+userRouter.use('/:userIndex', userMiddlewares.getUserDynamically('userIndex', 'params', '_id'));
 userRouter.get('/:userIndex', userController.getUserById);
 userRouter.delete('/:userIndex', userController.getUserById);
 userRouter.patch('/:userIndex', userController.getUserById);
+userRouter.post('/:userIndex/photo', userMiddlewares.checkUserAvatar, userController.uploadUserPhoto);
 
 userRouter.get('/pending', userController.getAllUser);
 

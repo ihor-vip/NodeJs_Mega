@@ -1,4 +1,5 @@
 const User = require('../dataBase/User.model');
+const s3Service = require('../services/s3.service');
 
 module.exports = {
   getAllUser: async (req, res, next) => {
@@ -33,6 +34,19 @@ module.exports = {
   getUserById: (req, res, next) => {
     try {
       res.json(req.user);
+    } catch (e) {
+      next(e);
+    }
+  },
+
+  uploadUserPhoto: async (req, res, next) => {
+    try {
+      const avatar = req.files.avatar;
+      const user = req.user;
+
+      const stringPromise = await s3Service.uploadFile(avatar, 'user', user._id);
+
+      res.json(stringPromise)
     } catch (e) {
       next(e);
     }

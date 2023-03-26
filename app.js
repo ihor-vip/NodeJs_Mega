@@ -1,4 +1,5 @@
 const express = require('express');
+const fileUpload = require('express-fileupload');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 
@@ -15,7 +16,9 @@ app.use(express.urlencoded({ extended: true }));
 
 mongoose.connect(MONGO_URL).then(() => {
   console.log('Connection success')
-})
+});
+
+app.use(fileUpload({}));
 
 app.use('/auth', authRouter);
 app.use('/users', userRouter);
