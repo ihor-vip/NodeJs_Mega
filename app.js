@@ -3,11 +3,14 @@ const express = require('express');
 const fileUpload = require('express-fileupload');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+const swaggerUI = require('swagger-ui-express');
 
 dotenv.config();
 
 const { PORT, MONGO_URL, NODE_ENV } = require('./config/config');
+const cronRun = require('./cron-jobs');
 const { authRouter, userRouter } = require('./routes');
+const swaggerJson = require('./swagger.json');
 const ApiError = require('@error');
 
 const app = express();
@@ -28,6 +31,7 @@ if (NODE_ENV === 'local') {
 
 app.use('/auth', authRouter);
 app.use('/users', userRouter);
+app.use('/docs', swaggerUI.serve, swaggerUI.setup(swaggerJson));
 app.use('*', _notFoundHandler);
 
 app.use(_mainErrorHandler);
@@ -49,6 +53,8 @@ function _mainErrorHandler(err, req, res, next) {
 
 app.listen(PORT, () => {
   console.log(`App listen ${PORT}`);
+
+  cronRun();
 });
 
 

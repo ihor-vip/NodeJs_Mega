@@ -1,0 +1,121 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Mega Course",
+    "version": "1.29.58",
+    "description": "Node.js"
+  },
+  "paths": {
+    "/users": {
+      "get": {
+        "description": "Get all users",
+        "tags": [
+          "User"
+        ],
+        "operationId": "getAllUsers",
+        "responses": {
+          "200": {
+            "description": "Return all users from DB",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/oneUser"
+              }
+            }
+          },
+          "400": {
+            "description": "Error",
+            "schema": {
+              "$ref": "#/definitions/errorSchema"
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "Create new user",
+        "operationId": "createNewUser",
+        "tags": [
+          "User"
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "formData",
+            "default": "Max",
+            "required": true
+          },
+          {
+            "type": "number",
+            "name": "age",
+            "in": "formData",
+            "default": 18,
+            "required": true
+          },
+          {
+            "type": "string",
+            "in": "header",
+            "name": "Authorization",
+            "default": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+              }
+            }
+          },
+          "400": {
+            "description": "Error",
+            "schema": {
+              "$ref": "#/definitions/errorSchema"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "oneUser": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "example": "test@test.com",
+          "default": "User Email"
+        },
+        "name": {
+          "type": "string",
+          "example": "Max"
+        },
+        "age": {
+          "type": "number",
+          "example": 18
+        }
+      }
+    },
+    "errorSchema": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "Email is not valid"
+        },
+        "data": {
+          "description": "customer email",
+          "type": "string",
+          "example": "admin@inoxoft.com"
+        },
+        "customCode": {
+          "description": "Custom error",
+          "type": "number",
+          "example": 4001
+        }
+      }
+    }
+  }
+}
