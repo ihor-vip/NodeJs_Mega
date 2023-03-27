@@ -10,8 +10,17 @@ const User = new Schema({
   role: { type: String, enum: Object.values(userRolesEnum), default: userRolesEnum.USER },
   password: { type: String, required: true, default: null, select: false }
 },
-{ timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
-);
+{
+  timestamps: true,
+  toJSON: {
+    virtuals: true,
+    transform: _userTransformer
+  },
+  toObject: {
+    virtuals: true,
+    transform: _userTransformer
+  }
+});
 
 User.virtual('fullName').get(function() {
   return this.name.toUpperCase()
@@ -27,15 +36,22 @@ User.statics = { // for schema // THIS - SCHEMA
 
 User.methods = { // for record // THIS - DOCUMENT
   checkIsPasswordsSame(password) {
-    console.log(this);
     console.log(password);
   },
 
   toRepresentation() {
-    delete this.password;
+    const user = this.toObject();
+    delete user.password;
 
-    return this;
+    return user;
   }
 }
 
 module.exports = model('User', User);
+
+
+function _userTransformer(doc, ret) {
+  delete ret.password;
+
+  return ret;
+}

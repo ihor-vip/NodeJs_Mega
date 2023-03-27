@@ -1,21 +1,12 @@
 const User = require('../dataBase/User.model');
-const s3Service = require('../services/s3.service');
+const {s3Service, userService} = require('../services');
 
 module.exports = {
   getAllUser: async (req, res, next) => {
     try {
-      const { limit = 20, page = 1 } = req.query;
-      const skip = (page - 1) * limit;
+      const paginationResponse = await userService.getUsersWithCount(req.query)
 
-      const users = await User.find().limit(limit).skip(skip);
-      const count = await User.count({});
-
-      res.json({
-        page,
-        perPage: limit,
-        data: users,
-        count
-      });
+      res.json(paginationResponse);
     } catch (e) {
       next(e);
     }
