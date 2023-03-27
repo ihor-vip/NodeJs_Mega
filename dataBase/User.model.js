@@ -1,7 +1,7 @@
 const { Schema, model } = require('mongoose');
 
 const { userRolesEnum } = require('../constants');
-const { authService } = require('../services');
+const authService = require('../services/auth.service');
 
 const User = new Schema({
   name: { type: String, trim: true, required: true },
@@ -25,6 +25,17 @@ const User = new Schema({
 User.virtual('fullName').get(function() {
   return this.name.toUpperCase()
 });
+
+User.virtual('chats', {
+  ref: 'Chat_Room_2_User',
+  localField: '_id',
+  foreignField: 'user',
+  justOne: false,
+});
+
+User.pre('findOne', function() {
+  this.populate('chats');
+})
 
 User.statics = { // for schema // THIS - SCHEMA
   async saveUserWithHashPassword(userToSave) {

@@ -11,7 +11,7 @@ dotenv.config();
 
 const { PORT, MONGO_URL, NODE_ENV } = require('./config/config');
 const cronRun = require('./cron-jobs');
-const { authRouter, userRouter, socketRouter } = require('./routes');
+const { authRouter, userRouter, socketRouter, chatRouter } = require('./routes');
 const swaggerJson = require('./swagger.json');
 const ApiError = require('@error');
 
@@ -20,6 +20,8 @@ const app = express();
 const server = http.createServer(app);
 
 const io = socketIO(server, { cors: { origin: '*' } });
+
+global.io = io;
 
 io.on('connection', (socket) => socketRouter(io, socket));
 
@@ -38,6 +40,7 @@ if (NODE_ENV === 'local') {
 }
 
 app.use('/auth', authRouter);
+app.use('/chat', chatRouter);
 app.use('/users', userRouter);
 app.use('/docs', swaggerUI.serve, swaggerUI.setup(swaggerJson));
 app.use('*', _notFoundHandler);

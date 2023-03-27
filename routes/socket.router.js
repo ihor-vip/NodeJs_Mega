@@ -1,9 +1,12 @@
 const { socketController } = require("../controllers");
 
 module.exports = (io, socket) => {
-  console.log('******************************');
-  console.log(socket.id);
-  console.log('******************************');
+  console.log(socket.id, 'connected');
+
+  socket.on('disconnecting', () => {
+    socket.leaveAll()
+    console.log(socket.id, 'disconnecting');
+  })
 
   socket.use((infoArr, next) => {
     console.log(infoArr);
@@ -11,6 +14,10 @@ module.exports = (io, socket) => {
     console.log('_________________________________________');
     console.log(socket.handshake.query.token);
     console.log('_________________________________________');
+
+    // getUserByToken
+
+    // Update user socketId // 3 => 10
 
     const [
       event,
@@ -22,7 +29,7 @@ module.exports = (io, socket) => {
     if (event.startsWith('message:')) {
       console.log('SOCKET MESSAGE ROUTER');
 
-      return;
+      return next();
     }
 
     if (event.startsWith('broadcast:')) {
@@ -32,10 +39,9 @@ module.exports = (io, socket) => {
 
       socket.on('broadcast:not:me', () => socketController.broadcastAvoidSender(io, socket));
 
-      return;
+      // do not forget to call next
+      return next()
     }
-
-    next();
   });
 
 
