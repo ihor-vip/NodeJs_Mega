@@ -4,4 +4,5 @@ module.exports = {
   s3Service: require('./s3.service'),
   userService: require('./user.service'),
   cacheService: require('./cache.service'),
+  smsService: require('./sms.service'),
 }

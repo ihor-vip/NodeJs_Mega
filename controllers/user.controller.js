@@ -1,9 +1,11 @@
 const axios = require('axios');
 
 const User = require('../dataBase/User.model');
-const { s3Service, userService, cacheService } = require('../services');
+const smsUtils = require('../utils/sms.util');
+const { s3Service, userService, cacheService, smsService } = require('../services');
 const XXXError = require('@error');
 const { deleteEndpointCache } = require("../services/cache.service");
+const { smsActionsEnum } = require('../constants');
 
 module.exports = {
   getAllUser: async (req, res, next) => {
@@ -19,6 +21,10 @@ module.exports = {
   createUser: async (req, res, next) => {
     try {
       const createdUser = await User.saveUserWithHashPassword(req.body);
+
+      const message = smsUtils[smsActionsEnum.WELCOME](createdUser.name);
+
+      await smsService.sendSMS(createdUser.phone, message);
 
       res.status(201).json(createdUser.toRepresentation());
     } catch (e) {
