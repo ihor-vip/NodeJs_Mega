@@ -1,6 +1,1 @@
-module.exports = {
-  WELCOME: 'welcome',
-  ORDER_COMPLETE: 'orderComplete',
-  FORGOT_PASSWORD: 'forgotPassword'
-};
-
+module.exports = require('Share/constants/email-actions.enum');

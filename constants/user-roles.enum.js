@@ -1,5 +1,1 @@
-module.exports = {
-  ADMIN: 'admin',
-  MANAGER: 'manager',
-  USER: 'user'
-}
+module.exports = require('Share/constants/user-roles.enum');

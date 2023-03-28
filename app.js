@@ -1,15 +1,18 @@
 require('module-alias/register');
 const express = require('express');
+const rateLimit = require('express-rate-limit')
+const helmet = require("helmet");
+const cors = require('cors');
 const http = require('http');
 const fileUpload = require('express-fileupload');
-const mongoose = require('mongoose');
+const { mongoose } = require('Share/dependencies');
 const dotenv = require('dotenv');
 const swaggerUI = require('swagger-ui-express');
 const socketIO = require('socket.io');
 
 dotenv.config();
 
-const { PORT, MONGO_URL, NODE_ENV } = require('./config/config');
+const { PORT, MONGO_URL, NODE_ENV, CORS_WHITE_LIST } = require('./config/config');
 const { cacheService } = require('./services');
 const cronRun = require('./cron-jobs');
 const { authRouter, userRouter, socketRouter, chatRouter } = require('./routes');
@@ -40,6 +43,10 @@ if (NODE_ENV === 'local') {
   app.use(morgan('dev'));
 }
 
+app.use(rateLimit(_configureRateLimit()));
+app.use(helmet());
+app.use(cors(_configureCors()));
+
 app.use('/auth', authRouter);
 app.use('/chat', chatRouter);
 app.use('/users', userRouter);
@@ -62,6 +69,29 @@ function _mainErrorHandler(err, req, res, next) {
       status: err.status,
       data: {}
     });
+}
+
+function _configureCors() {
+  const whiteListArr = CORS_WHITE_LIST.split(';');
+
+  return {
+    origin: (origin, callback) => {
+      if (whiteListArr.includes(origin)) {
+        return callback(null, true)
+      }
+
+      callback(new Error('Not allowed by CORS'))
+    }
+  }
+}
+
+function _configureRateLimit() {
+  return {
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+    standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+    legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  }
 }
 
 server.listen(PORT, async () => {

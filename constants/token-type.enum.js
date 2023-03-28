@@ -1,4 +1,1 @@
-module.exports = {
-  ACCESS: 'access',
-  REFRESH: 'refresh'
-};
+module.exports = require('Share/constants/token-type.enum');

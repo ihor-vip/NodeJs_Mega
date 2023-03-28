@@ -1,3 +1,1 @@
-module.exports = {
-  FORGOT_PASSWORD: 'forgotPassword'
-};
+module.exports = require('Share/constants/action-types.enum');

@@ -3,7 +3,7 @@ const { emailActionsEnum, actionTypesEnum } = require('../constants')
 const { authService, emailService } = require('../services')
 const OAuth = require('../dataBase/OAuth.model')
 const ActionToken = require('../dataBase/ActionToken.model')
-const User = require('../dataBase/User.model')
+const User = require('Share/dataBase/User.model')
 
 module.exports = {
   login: async (req, res, next) => {
