@@ -46,8 +46,8 @@ User.statics = { // for schema // THIS - SCHEMA
 }
 
 User.methods = { // for record // THIS - DOCUMENT
-  checkIsPasswordsSame(password) {
-    console.log(password);
+  async checkIsPasswordsSame(password) {
+    await authService.comparePasswords(this.password, password);
   },
 
   toRepresentation() {

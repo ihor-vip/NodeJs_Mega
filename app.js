@@ -10,6 +10,7 @@ const socketIO = require('socket.io');
 dotenv.config();
 
 const { PORT, MONGO_URL, NODE_ENV } = require('./config/config');
+const { cacheService } = require('./services');
 const cronRun = require('./cron-jobs');
 const { authRouter, userRouter, socketRouter, chatRouter } = require('./routes');
 const swaggerJson = require('./swagger.json');
@@ -42,6 +43,7 @@ if (NODE_ENV === 'local') {
 app.use('/auth', authRouter);
 app.use('/chat', chatRouter);
 app.use('/users', userRouter);
+
 app.use('/docs', swaggerUI.serve, swaggerUI.setup(swaggerJson));
 app.use('*', _notFoundHandler);
 
@@ -62,8 +64,10 @@ function _mainErrorHandler(err, req, res, next) {
     });
 }
 
-server.listen(PORT, () => {
+server.listen(PORT, async () => {
   console.log(`App listen ${PORT}`);
+
+  await cacheService.client.connect();
 
   cronRun();
 });

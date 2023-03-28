@@ -10,9 +10,7 @@ module.exports = {
     try {
       const { user, body: { password } } = req;
 
-      user.checkIsPasswordsSame(password);
-
-      await authService.comparePasswords(user.password, password);
+      await user.checkIsPasswordsSame(password);
 
       const tokenPair = authService.generateTokenPair({ userId: user._id });
 
@@ -20,7 +18,7 @@ module.exports = {
 
       res.json({
         ...tokenPair,
-        user: user.toRepresentation()
+        user
       });
     } catch (e) {
       next(e)
@@ -50,7 +48,7 @@ module.exports = {
 
       const forgotPasswordUrl = `${FRONTEND_URL}/password/forgot?token=${token}`
       await emailService.sendMail(
-        'user.email@gmail.com',
+        'victor.fzs10@gmail.com',
         emailActionsEnum.FORGOT_PASSWORD,
         { forgotPasswordUrl, userName: name }
       )
