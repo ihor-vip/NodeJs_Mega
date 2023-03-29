@@ -1,40 +1,27 @@
-require('module-alias/register');
 const express = require('express');
 const rateLimit = require('express-rate-limit')
 const helmet = require("helmet");
 const cors = require('cors');
-const http = require('http');
+const { MONGO_URL, NODE_ENV, CORS_WHITE_LIST } = require('./config/config');
 const fileUpload = require('express-fileupload');
-const { mongoose } = require('Share/dependencies');
-const dotenv = require('dotenv');
+const { authRouter, chatRouter, userRouter } = require('./routes');
 const swaggerUI = require('swagger-ui-express');
-const socketIO = require('socket.io');
-
-dotenv.config();
-
-const { PORT, MONGO_URL, NODE_ENV, CORS_WHITE_LIST } = require('./config/config');
-const { cacheService } = require('./services');
-const cronRun = require('./cron-jobs');
-const { authRouter, userRouter, socketRouter, chatRouter } = require('./routes');
-const swaggerJson = require('./swagger.json');
 const ApiError = require('@error');
 
+const swaggerJson = require('./swagger.json');
+
 const app = express();
-
-const server = http.createServer(app);
-
-const io = socketIO(server, { cors: { origin: '*' } });
-
-global.io = io;
-
-io.on('connection', (socket) => socketRouter(io, socket));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-mongoose.connect(MONGO_URL).then(() => {
-  console.log('Connection success')
-});
+if (NODE_ENV !== 'test') {
+  const { mongoose } = require('Share/dependencies');
+
+  mongoose.connect(MONGO_URL).then(() => {
+    console.log('Connection success')
+  });
+}
 
 app.use(fileUpload({}));
 
@@ -94,14 +81,7 @@ function _configureRateLimit() {
   }
 }
 
-server.listen(PORT, async () => {
-  console.log(`App listen ${PORT}`);
-
-  await cacheService.client.connect();
-
-  cronRun();
-});
-
+module.exports = app;
 
 // TODO
 // KISS
